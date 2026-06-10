@@ -1,10 +1,19 @@
 package com.aditha.demo.model;
 
 public class Todo {
+
     private int id;
     private String title;
     private boolean completed;
 
+    public Todo() {
+    }
+
+    public Todo(int id, String title, boolean completed) {
+        this.id = id;
+        this.title = title;
+        this.completed = completed;
+    }
 
     public int getId() {
         return id;
@@ -12,8 +21,8 @@ public class Todo {
 
     public void setId(int id) {
         this.id = id;
-    }
-   
+    }   
+
     public String getTitle() {
         return title;
     }
@@ -29,17 +38,4 @@ public class Todo {
     public void setCompleted(boolean completed) {
         this.completed = completed;
     }
-
-    //empty constructor
-    public Todo() {
-
-    }
-
-    public Todo(int id , String title , boolean completed) {
-        this.id = id;
-        this.title =title;
-        this.completed=completed;
-
-    }
-
 }
