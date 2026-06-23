@@ -2,7 +2,7 @@ package com.aditha.demo.controller;
 
 import com.aditha.demo.model.Todo;
 import com.aditha.demo.service.TodoService;
-
+import com.aditha.demo.dto.TodoRequest;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.http.ResponseEntity;
 
 import java.util.List;
-import java.util.Map;
+
 
 @RestController
 @RequestMapping("/api/todos")
@@ -32,7 +32,7 @@ public class TodoController {
     }
 
     @GetMapping("/{id}")
-    public Object getTodoById(@PathVariable int id) {
+    public  ResponseEntity<Object> getTodoById(@PathVariable int id) {
         Todo todo = todoService.getTodoById(id);
         if(todo == null) {
             return ResponseEntity.status(404).body("Todo with id " + id + " not found");
@@ -41,17 +41,18 @@ public class TodoController {
     }
 
     @PostMapping
-    public Todo addTodo(@RequestBody Map<String, Object> body) {
-        String title = body.get("title").toString();
-        boolean completed = (boolean) body.get("completed");
+    public ResponseEntity<Todo> addTodo(@RequestBody TodoRequest request) {
+        String title = request.getTitle();
+        boolean completed = request.isCompleted();
+        Todo savedTodo = todoService.addTodo(title, completed);
 
-        return todoService.addTodo(title, completed);
+        return ResponseEntity.status(201).body(savedTodo);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Object> updateTodo(@PathVariable int id, @RequestBody Map<String, Object> body) {
-        String title = body.get("title").toString();
-        boolean completed = (boolean) body.get("completed");
+    public ResponseEntity<Object> updateTodo(@PathVariable int id, @RequestBody TodoRequest request) {
+        String title = request.getTitle();
+        boolean completed = request.isCompleted();
 
         Todo updatedTodo = todoService.updateTodo(id, title,completed);
         if (updatedTodo == null) {
@@ -61,7 +62,11 @@ public class TodoController {
     }
 
     @DeleteMapping("/{id}")
-    public String deleteTodo(@PathVariable int id) {
-        return todoService.deleteTodo(id);
+    public ResponseEntity<Object> deleteTodo(@PathVariable int id) {
+        String result = todoService.deleteTodo(id);
+        if (result == null) {
+            return ResponseEntity.status(404).body("Todo with id " + id + " not found");
+        }
+        return ResponseEntity.ok(result);
     }
 }
